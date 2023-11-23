@@ -1,6 +1,6 @@
 package adventofcode2023;
 
-import day01.Day01;
+import adventofcode2023.day01.Day01;
 
 public class Main {
     public static void main(String[] args) {
