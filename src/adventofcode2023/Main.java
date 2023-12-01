@@ -10,8 +10,8 @@ public class Main {
     public static void run(Day instanceForPartOne, Day instanceForPartTwo) {
         instanceForPartOne.init();
         instanceForPartTwo.init();
-        System.out.print("Part one: ");
-        instanceForPartOne.partOne();
+//        System.out.print("Part one: ");
+//        instanceForPartOne.partOne();
         System.out.print("Part two: ");
         instanceForPartTwo.partTwo();
     }
