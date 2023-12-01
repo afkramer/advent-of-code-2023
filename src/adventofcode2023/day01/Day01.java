@@ -77,6 +77,12 @@ public class Day01 implements Day {
 
     }
 
+    public List<String> replacesNumberWordsWithNumbers(List<String> inputs) {
+        return inputs.stream()
+                     .map(s -> replaceNumberWordsWithNumbers(s))
+                     .toList();
+    }
+
     public String replaceNumberWordsWithNumbersOld(String string) {
         // Had to use instance variable because you can't change local variables inside
         // a stream
