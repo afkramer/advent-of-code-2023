@@ -6,7 +6,7 @@
 *.class
 
 # bin .txt files
-bin
+bin/**/*.txt
 
 # Log file
 *.log
