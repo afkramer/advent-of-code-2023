@@ -25,45 +25,34 @@ public class Day01 implements Day {
 
         for (String input : inputs) {
             String[] characters = input.split("");
-            List<Integer> ints = new ArrayList<Integer>();
-            Arrays.stream(characters)
-                  .forEach(c -> {
-                      if (parseInteger(c) != null) {
-                          ints.add(parseInteger(c));
-                      }
-                  });
-            Integer firstAndLast = parseInteger("" + ints.get(0) + ints.get(ints.size() - 1));
-            sum += firstAndLast;
+            sum += getNumberFromInputLineCharacters(characters);
         }
         System.out.println(sum);
     }
 
-    // Refactor, as the solutions include the same code
     @Override
     public void partTwo() {
         int sum = 0;
-        int counter = 1;
+
         for (String input : inputs) {
             String[] characters = replaceNumberWordsWithNumbers(input).split("");
-            List<Integer> ints = new ArrayList<Integer>();
-            Arrays.stream(characters)
-                  .forEach(c -> {
-                      if (parseInteger(c) != null) {
-                          ints.add(parseInteger(c));
-                      }
-                  });
-            Integer first = ints.get(0);
-            Integer last = ints.get(ints.size() - 1);
-            Integer firstAndLast = parseInteger("" + first + last);
-
-            sum += firstAndLast;
-            System.out.println(String.format(
-                    "Input line: %d, input string: %s, first: %d, last: %d, firstAndLast: %d sum: %d", counter,
-                    input, first, last, firstAndLast,
-                    sum));
-            counter++;
+            sum += getNumberFromInputLineCharacters(characters);
         }
+
         System.out.println(sum);
+    }
+
+    public Integer getNumberFromInputLineCharacters(String[] characters) {
+        List<Integer> ints = new ArrayList<Integer>();
+        Arrays.stream(characters)
+              .forEach(c -> {
+                  if (parseInteger(c) != null) {
+                      ints.add(parseInteger(c));
+                  }
+              });
+        Integer first = ints.get(0);
+        Integer last = ints.get(ints.size() - 1);
+        return parseInteger("" + first + last);
     }
 
     public Integer parseInteger(String string) {
