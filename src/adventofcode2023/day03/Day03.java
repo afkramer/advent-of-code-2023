@@ -16,7 +16,8 @@ public class Day03 implements Day {
 
     @Override
     public void partTwo() {
-        System.out.println("Part two not yet implemented");
+        EngineSchematic schematic = new EngineSchematic(inputStrings);
+        System.out.println(schematic.sumGearRatios());
     }
 
 }
