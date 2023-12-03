@@ -1,10 +1,10 @@
 package adventofcode2023;
 
-import adventofcode2023.day02.Day02;
+import adventofcode2023.day03.Day03;
 
 public class Main {
     public static void main(String[] args) {
-        run(new Day02(), new Day02());
+        run(new Day03(), new Day03());
     }
 
     public static void run(Day instanceForPartOne, Day instanceForPartTwo) {
