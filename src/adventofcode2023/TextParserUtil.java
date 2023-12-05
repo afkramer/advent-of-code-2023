@@ -24,4 +24,12 @@ public class TextParserUtil {
             return null;
         }
     }
+
+    public static Long parseLong(String string) {
+        try {
+            return Long.parseLong(string);
+        } catch (NumberFormatException nfe) {
+            return null;
+        }
+    }
 }
