@@ -29,64 +29,32 @@ public class Seed {
         return value;
     }
 
-    public void setValue(long value) {
-        this.value = value;
-    }
-
     public long getSoilValue() {
         return soilValue;
-    }
-
-    public void setSoilValue(long soilValue) {
-        this.soilValue = soilValue;
     }
 
     public long getFertilizerValue() {
         return fertilizerValue;
     }
 
-    public void setFertilizerValue(long fertilizerValue) {
-        this.fertilizerValue = fertilizerValue;
-    }
-
     public long getWaterValue() {
         return waterValue;
-    }
-
-    public void setWaterValue(long waterValue) {
-        this.waterValue = waterValue;
     }
 
     public long getLightValue() {
         return lightValue;
     }
 
-    public void setLightValue(long lightValue) {
-        this.lightValue = lightValue;
-    }
-
     public long getTemperatureValue() {
         return temperatureValue;
-    }
-
-    public void setTemperatureValue(long temperatureValue) {
-        this.temperatureValue = temperatureValue;
     }
 
     public long getHumidityValue() {
         return humidityValue;
     }
 
-    public void setHumidityValue(long humidityValue) {
-        this.humidityValue = humidityValue;
-    }
-
     public long getLocationValue() {
         return locationValue;
-    }
-
-    public void setLocationValue(long locationValue) {
-        this.locationValue = locationValue;
     }
 
 }

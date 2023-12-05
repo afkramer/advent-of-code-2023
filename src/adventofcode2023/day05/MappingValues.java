@@ -1,6 +1,9 @@
 package adventofcode2023.day05;
 
 public class MappingValues {
+    private MappingValues() {
+    }
+
     private static String seedToSoilRawMappings = """
             3680121696 1920754815 614845600
             1920754815 3846369604 448597692

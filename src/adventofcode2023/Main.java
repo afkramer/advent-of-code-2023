@@ -1,5 +1,8 @@
 package adventofcode2023;
 
+import java.time.Duration;
+import java.time.Instant;
+
 import adventofcode2023.day05.Day05;
 
 public class Main {
@@ -11,8 +14,16 @@ public class Main {
         instanceForPartOne.init();
         instanceForPartTwo.init();
         System.out.print("Part one: ");
+        Instant startOne = Instant.now();
         instanceForPartOne.partOne();
+        Instant finishOne = Instant.now();
+        System.out
+                .println(String.format("Part one took %d seconds", Duration.between(startOne, finishOne).toSeconds()));
         System.out.print("Part two: ");
+        Instant startTwo = Instant.now();
         instanceForPartTwo.partTwo();
+        Instant finishTwo = Instant.now();
+        System.out
+                .println(String.format("Part two took %d seconds", Duration.between(startTwo, finishTwo).toSeconds()));
     }
 }

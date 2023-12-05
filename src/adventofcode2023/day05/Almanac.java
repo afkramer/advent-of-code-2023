@@ -12,7 +12,7 @@ public class Almanac {
             ElementType.HUMIDITY);
     private static ElementMapping humidityToLocation = new ElementMapping(ElementType.HUMIDITY, ElementType.LOCATION);
 
-    {
+    static {
         initializeMapping(seedToSoil, MappingValues.getSeedToSoilRawMappings());
         initializeMapping(soilToFertilizer, MappingValues.getSoilToFertilizerRawMappings());
         initializeMapping(fertilizerToWater, MappingValues.getFertilizerToWaterRawMappings());
@@ -31,6 +31,7 @@ public class Almanac {
 
             mapping.addMappingValue(sourceValue, destinationValue, range);
         }
+
     }
 
     public static ElementMapping getSeedToSoil() {

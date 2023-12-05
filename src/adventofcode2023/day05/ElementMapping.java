@@ -33,7 +33,7 @@ public class ElementMapping {
     public Long getDestinationForSource(Long sourceValue) {
         for (MappingValue mappingValue : mappingValues) {
             if (sourceValue >= mappingValue.getSourceValue()
-                    && sourceValue <= (mappingValue.getSourceValue() + mappingValue.getRange() - 1)) {
+                    && sourceValue < (mappingValue.getSourceValue() + mappingValue.getRange())) {
                 Long difference = sourceValue - mappingValue.getSourceValue();
                 return mappingValue.getDestinationValue() + difference;
             }
