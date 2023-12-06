@@ -36,7 +36,7 @@ public class Day06 implements Day {
         long sumOfWins = 0;
         for (int i = 0; i < raceTimes.size(); i++) {
             ToyBoat boat = new ToyBoat(raceTimes.get(i), distancesToBeat.get(i));
-            int wins = boat.determineWaysToWin().size();
+            long wins = boat.determineWaysToWin();
             if (sumOfWins == 0) {
                 sumOfWins = wins;
             } else {
@@ -48,13 +48,13 @@ public class Day06 implements Day {
 
     @Override
     public void partTwo() {
-        // Long raceTime =
+        // First combine the race times and distances to one number
         Long raceTime = TextParserUtil
                 .parseLong(raceTimes.stream().map(i -> Integer.toString(i)).reduce("", (a, b) -> a + b));
         Long distance = TextParserUtil
                 .parseLong(distancesToBeat.stream().map(i -> Integer.toString(i)).reduce("", (a, b) -> a + b));
         ToyBoat boat = new ToyBoat(raceTime, distance);
-        System.out.println(boat.determineWaysToWinLongRace());
+        System.out.println(boat.determineWaysToWin());
     }
 
 }
