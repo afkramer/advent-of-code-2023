@@ -3,11 +3,11 @@ package adventofcode2023;
 import java.time.Duration;
 import java.time.Instant;
 
-import adventofcode2023.day05.Day05;
+import adventofcode2023.day06.Day06;
 
 public class Main {
     public static void main(String[] args) {
-        run(new Day05(), new Day05());
+        run(new Day06(), new Day06());
     }
 
     public static void run(Day instanceForPartOne, Day instanceForPartTwo) {
