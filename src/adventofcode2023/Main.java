@@ -4,11 +4,11 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 
-import adventofcode2023.day08.Day08;
+import adventofcode2023.day05.Day05;
 
 public class Main {
     public static void main(String[] args) {
-        run(new Day08(), new Day08());
+        run(new Day05(), new Day05());
     }
 
     public static void run(Day instanceForPartOne, Day instanceForPartTwo) {
@@ -18,7 +18,7 @@ public class Main {
         System.out.println("Timestamp start part one: " + dateTime);
         System.out.print("Part one: ");
         Instant startOne = Instant.now();
-        // instanceForPartOne.partOne();
+        instanceForPartOne.partOne();
         Instant finishOne = Instant.now();
         System.out
                 .println(String.format("Part one took %d seconds", Duration.between(startOne, finishOne).toSeconds()));
