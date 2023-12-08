@@ -11,7 +11,7 @@ import adventofcode2023.TextParserUtil;
 
 public class Day01 implements Day {
 
-    private static Map<String, Integer> stringsAsNumbers;
+    private static Map<String, String> stringsAsNumbers;
     private static List<String> inputs = TextParserUtil.readData("day01.txt");
     private String numberToConvert;
 
@@ -45,11 +45,11 @@ public class Day01 implements Day {
     public Integer getNumberFromInputLineCharacters(String[] characters) {
         List<Integer> ints = new ArrayList<Integer>();
         Arrays.stream(characters)
-              .forEach(c -> {
-                  if (parseInteger(c) != null) {
-                      ints.add(parseInteger(c));
-                  }
-              });
+                .forEach(c -> {
+                    if (parseInteger(c) != null) {
+                        ints.add(parseInteger(c));
+                    }
+                });
         Integer first = ints.get(0);
         Integer last = ints.get(ints.size() - 1);
         return parseInteger("" + first + last);
@@ -64,23 +64,23 @@ public class Day01 implements Day {
     }
 
     public void initializeNumbersAsStringsMap() {
-        stringsAsNumbers = new HashMap<String, Integer>();
-        stringsAsNumbers.put("one", 1);
-        stringsAsNumbers.put("two", 2);
-        stringsAsNumbers.put("three", 3);
-        stringsAsNumbers.put("four", 4);
-        stringsAsNumbers.put("five", 5);
-        stringsAsNumbers.put("six", 6);
-        stringsAsNumbers.put("seven", 7);
-        stringsAsNumbers.put("eight", 8);
-        stringsAsNumbers.put("nine", 9);
+        stringsAsNumbers = new HashMap<String, String>();
+        stringsAsNumbers.put("one", "o1e");
+        stringsAsNumbers.put("two", "t2o");
+        stringsAsNumbers.put("three", "t3e");
+        stringsAsNumbers.put("four", "f4r");
+        stringsAsNumbers.put("five", "f5e");
+        stringsAsNumbers.put("six", "s6x");
+        stringsAsNumbers.put("seven", "s7n");
+        stringsAsNumbers.put("eight", "e8t");
+        stringsAsNumbers.put("nine", "n9e");
 
     }
 
     public List<String> replacesNumberWordsWithNumbers(List<String> inputs) {
         return inputs.stream()
-                     .map(s -> replaceNumberWordsWithNumbers(s))
-                     .toList();
+                .map(s -> replaceNumberWordsWithNumbers(s))
+                .toList();
     }
 
     public String replaceNumberWordsWithNumbersOld(String string) {
@@ -99,7 +99,8 @@ public class Day01 implements Day {
                 lastFoundPattern = string.indexOf(stringNum, lastFoundPattern);
                 if (lastFoundPattern != -1) {
                     string = string.substring(0, lastFoundPattern + (stringNum.length() - 1)) + stringsAsNumbers.get(
-                            stringNum) + string.substring(
+                            stringNum)
+                            + string.substring(
                                     lastFoundPattern + (stringNum.length() - 1));
                     lastFoundPattern += stringNum.length();
                 }

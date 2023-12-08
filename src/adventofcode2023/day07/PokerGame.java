@@ -1,6 +1,7 @@
-package day07;
+package adventofcode2023.day07;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -36,9 +37,10 @@ public class PokerGame {
     public long rankAndScoreHands() {
         // Collections.sort(hands);
         hands.sort(PokerHand::compareTo);
-        final List<PokerHand> handsFinal = hands;
-        return IntStream.rangeClosed(1, handsFinal.size()).boxed()
-                .map((Integer i) -> i * handsFinal.get(i - 1).getBidValue()).reduce(0L,
+        hands.sort(Comparator.naturalOrder());
+        // final List<PokerHand> handsFinal = hands;
+        return IntStream.rangeClosed(1, hands.size()).boxed()
+                .map((Integer i) -> i * hands.get(i - 1).getBidValue()).reduce(0L,
                         (a, b) -> a + b);
     }
 

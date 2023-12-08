@@ -1,4 +1,4 @@
-package day07;
+package adventofcode2023.day07;
 
 import java.util.List;
 import java.util.Map;

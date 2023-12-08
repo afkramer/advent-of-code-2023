@@ -2,23 +2,27 @@ package adventofcode2023;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDateTime;
 
-import day07.Day07;
+import adventofcode2023.day08.Day08;
 
 public class Main {
     public static void main(String[] args) {
-        run(new Day07(), new Day07());
+        run(new Day08(), new Day08());
     }
 
     public static void run(Day instanceForPartOne, Day instanceForPartTwo) {
         instanceForPartOne.init();
         instanceForPartTwo.init();
+        LocalDateTime dateTime = LocalDateTime.now();
+        System.out.println("Timestamp start part one: " + dateTime);
         System.out.print("Part one: ");
         Instant startOne = Instant.now();
-        instanceForPartOne.partOne();
+        // instanceForPartOne.partOne();
         Instant finishOne = Instant.now();
         System.out
                 .println(String.format("Part one took %d seconds", Duration.between(startOne, finishOne).toSeconds()));
+        System.out.println("Timestamp start part two: " + dateTime);
         System.out.print("Part two: ");
         Instant startTwo = Instant.now();
         instanceForPartTwo.partTwo();

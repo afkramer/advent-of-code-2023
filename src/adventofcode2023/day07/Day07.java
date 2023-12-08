@@ -1,4 +1,4 @@
-package day07;
+package adventofcode2023.day07;
 
 import adventofcode2023.Day;
 
@@ -8,7 +8,6 @@ public class Day07 implements Day {
     public void partOne() {
         PokerGame game = new PokerGame(false);
         System.out.println(game.rankAndScoreHands());
-        System.out.println();
     }
 
     @Override
