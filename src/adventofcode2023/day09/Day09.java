@@ -9,8 +9,8 @@ import adventofcode2023.Day;
 import adventofcode2023.TextParserUtil;
 
 public class Day09 implements Day {
-
     private List<List<Long>> inputs;
+    private String firstOrLast;
 
     @Override
     public void init() {
@@ -24,27 +24,28 @@ public class Day09 implements Day {
 
     @Override
     public void partOne() {
-        long totalSum = 0L;
-
-        for (List<Long> input : this.inputs) {
-            totalSum += createHistoriesAndSumForOneSequence(input, "last");
-        }
-
-        System.out.println(totalSum);
+        this.firstOrLast = "last";
+        System.out.println(sumExtrapolatedValuesOfAllSequences());
     }
 
     @Override
     public void partTwo() {
+        this.firstOrLast = "first";
+        System.out.println(sumExtrapolatedValuesOfAllSequences());
+    }
+
+    public long sumExtrapolatedValuesOfAllSequences() {
         long totalSum = 0L;
 
         for (List<Long> input : this.inputs) {
-            totalSum += createHistoriesAndSumForOneSequence(input, "first");
+            List<List<Long>> histories = createHistoriesForOneSequence(input);
+            totalSum += findExtrapolatedValuesFromHistories(histories);
         }
 
-        System.out.println(totalSum);
+        return totalSum;
     }
 
-    public long createHistoriesAndSumForOneSequence(List<Long> sequence, String firstOrLast) {
+    public List<List<Long>> createHistoriesForOneSequence(List<Long> sequence) {
         List<List<Long>> histories = new ArrayList<>();
         histories.add(sequence);
         List<Long> lastHistory = sequence;
@@ -59,38 +60,31 @@ public class Day09 implements Day {
             lastHistory = newHistory;
         }
 
-        if (firstOrLast.equals("last")) {
-            return findLastExtrapolatedValuesFromHistories(histories);
+        return histories;
+    }
+
+    public long findExtrapolatedValuesFromHistories(List<List<Long>> histories) {
+        Collections.reverse(histories);
+        List<Long> numbersToExtrapolate;
+        if (this.firstOrLast.equals("first")) {
+            numbersToExtrapolate = histories.stream().map(list -> list.get(0)).toList();
         } else {
-            return findFirstExtrapolatedValuesFromHistories(histories);
+            numbersToExtrapolate = histories.stream().map(list -> list.get(list.size() - 1)).toList();
         }
 
-    }
-
-    public long findLastExtrapolatedValuesFromHistories(List<List<Long>> histories) {
-
-        Collections.reverse(histories);
-        List<Long> lastNumbers = histories.stream().map(list -> list.get(list.size() - 1)).toList();
-
         long lastExtrapolatedValue = 0L;
-        for (int i = 0; i < lastNumbers.size(); i++) {
-            long newExtrapolatedValue = lastNumbers.get(i) + lastExtrapolatedValue;
+        for (int i = 0; i < numbersToExtrapolate.size(); i++) {
+            long newExtrapolatedValue;
+
+            if (this.firstOrLast.equals("first")) {
+                newExtrapolatedValue = numbersToExtrapolate.get(i) - lastExtrapolatedValue;
+            } else {
+                newExtrapolatedValue = numbersToExtrapolate.get(i) + lastExtrapolatedValue;
+            }
+
             lastExtrapolatedValue = newExtrapolatedValue;
         }
 
-        return lastExtrapolatedValue;
-    }
-
-    public long findFirstExtrapolatedValuesFromHistories(List<List<Long>> histories) {
-        long lastExtrapolatedValue = 0L;
-
-        Collections.reverse(histories);
-        List<Long> firstNumbers = histories.stream().map(list -> list.get(0)).toList();
-
-        for (int i = 0; i < firstNumbers.size(); i++) {
-            long newExtrapolatedValue = firstNumbers.get(i) - lastExtrapolatedValue;
-            lastExtrapolatedValue = newExtrapolatedValue;
-        }
         return lastExtrapolatedValue;
     }
 
