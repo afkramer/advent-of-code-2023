@@ -17,6 +17,15 @@ public class TextParserUtil {
         }
     }
 
+    public static String[][] readDataAsArray(String fileName) {
+        List<String> lines = readData(fileName);
+        String[][] matrix = new String[lines.size()][lines.get(0).length()];
+        for (int i = 0; i < lines.size(); i++) {
+            matrix[i] = lines.get(i).split("");
+        }
+        return matrix;
+    }
+
     public static Integer parseInteger(String string) {
         try {
             return Integer.parseInt(string);

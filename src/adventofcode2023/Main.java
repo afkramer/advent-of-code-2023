@@ -4,11 +4,11 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 
-import adventofcode2023.day09.Day09;
+import adventofcode2023.day10.Day10;
 
 public class Main {
     public static void main(String[] args) {
-        run(new Day09(), new Day09());
+        run(new Day10(), new Day10());
     }
 
     public static void run(Day instanceForPartOne, Day instanceForPartTwo) {
