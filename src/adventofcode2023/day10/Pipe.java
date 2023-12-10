@@ -1,76 +1,60 @@
 package adventofcode2023.day10;
 
-public enum Pipe {
-    VERT("|"),
-    HOR("-"),
-    BEND_NE("L"),
-    BEND_NW("J"),
-    BEND_SW("7"),
-    BEND_SE("F");
+public class Pipe {
+    Coordinate coord;
+    String code;
+    PipeType type;
+    boolean visited;
 
-    private String code;
-
-    private Pipe(String code) {
+    public Pipe(int xVal, int yVal, String code) {
+        this.coord = new Coordinate(xVal, yVal);
         this.code = code;
+        this.type = PipeType.parsePipeFromCode(code);
     }
 
-    public static Pipe parsePipeFromCode(String code) {
-        return switch (code) {
-            case "|" -> VERT;
-            case "-" -> HOR;
-            case "L" -> BEND_NE;
-            case "J" -> BEND_NW;
-            case "7" -> BEND_SW;
-            case "F" -> BEND_SE;
-            default -> null;
-        };
+    public Coordinate getCoord() {
+        return this.coord;
     }
 
-    public Coordinate resultEntryFromNorth() {
-        return switch (this) {
-            case VERT -> new Coordinate(-1, 0);
-            case HOR -> null;
-            case BEND_NE -> new Coordinate(1, 1);
-            case BEND_NW -> new Coordinate(-1, -1);
-            case BEND_SW -> null;
-            case BEND_SE -> null;
-            default -> null;
-        };
+    public String getCode() {
+        return this.code;
     }
 
-    public Coordinate resultEntryFromEast() {
-        return switch (this) {
-            case VERT -> null;
-            case HOR -> new Coordinate(0, -1);
-            case BEND_NE -> new Coordinate(-1, -1);
-            case BEND_NW -> null;
-            case BEND_SW -> null;
-            case BEND_SE -> new Coordinate(1, -1);
-            default -> null;
-        };
+    public PipeType getType() {
+        return this.type;
     }
 
-    public Coordinate resultEntryFromSouth() {
-        return switch (this) {
-            case VERT -> new Coordinate(-1, 0);
-            case HOR -> null;
-            case BEND_NE -> null;
-            case BEND_NW -> null;
-            case BEND_SW -> new Coordinate(-1, -1);
-            case BEND_SE -> new Coordinate(-1, 1);
-            default -> null;
-        };
+    public boolean wasVisited() {
+        return this.visited;
     }
 
-    public Coordinate resultEntryFromWest() {
-        return switch (this) {
-            case VERT -> null;
-            case HOR -> new Coordinate(0, 1);
-            case BEND_NE -> null;
-            case BEND_NW -> new Coordinate(-1, 1);
-            case BEND_SW -> new Coordinate(1, 1);
-            case BEND_SE -> null;
-            default -> null;
-        };
+    public void visit() {
+        this.visited = true;
     }
+
+    public Pipe findPipeToNorth() {
+        int newXVal = this.coord.getxVal() - 1;
+        int newYVal = this.coord.getyVal();
+        return PipeMatrix.getPipeAtCoord(new Coordinate(newXVal, newYVal));
+
+    }
+
+    public Pipe findPipeToEast() {
+        int newXVal = this.coord.getxVal();
+        int newYVal = this.coord.getyVal() + 1;
+        return PipeMatrix.getPipeAtCoord(new Coordinate(newXVal, newYVal));
+    }
+
+    public Pipe findPipeToSouth() {
+        int newXVal = this.coord.getxVal() + 1;
+        int newYVal = this.coord.getyVal();
+        return PipeMatrix.getPipeAtCoord(new Coordinate(newXVal, newYVal));
+    }
+
+    public Pipe findPipeToWest() {
+        int newXVal = this.coord.getxVal();
+        int newYVal = this.coord.getyVal() - 1;
+        return PipeMatrix.getPipeAtCoord(new Coordinate(newXVal, newYVal));
+    }
+
 }
