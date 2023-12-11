@@ -12,7 +12,8 @@ public class Day10 implements Day {
 
     @Override
     public void partTwo() {
-        System.out.println();
+        PipeAnalyzer analyzer = new PipeAnalyzer();
+        System.out.println(analyzer.countInteriorTiles());
     }
 
 }

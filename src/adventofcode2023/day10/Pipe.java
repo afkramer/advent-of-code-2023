@@ -5,6 +5,9 @@ public class Pipe {
     String code;
     PipeType type;
     boolean visited;
+    boolean counted;
+    // Add variables to track the pipes that connected to it during the path
+    // Necessary for calculating which blocks are actually inside the path
 
     public Pipe(int xVal, int yVal, String code) {
         this.coord = new Coordinate(xVal, yVal);
@@ -30,6 +33,14 @@ public class Pipe {
 
     public void visit() {
         this.visited = true;
+    }
+
+    public boolean wasCounted() {
+        return this.counted;
+    }
+
+    public void count() {
+        this.counted = true;
     }
 
     public Pipe findPipeToNorth() {

@@ -14,25 +14,22 @@ public class PipeAnalyzer {
             Pipe pipeToEast = currPipe.findPipeToEast();
             Pipe pipeToSouth = currPipe.findPipeToSouth();
             Pipe pipeToWest = currPipe.findPipeToWest();
+            currPipe.visit();
 
             if (currPipe.getType().canLeaveToNorth() && pipeToNorth != null && !pipeToNorth.wasVisited()
                     && pipeToNorth.getType().resultEntryFromSouth() != null) {
-                currPipe.visit();
                 sb.append(pipeToNorth.getCode());
                 currPipe = pipeToNorth;
             } else if (currPipe.getType().canLeaveToEast() && pipeToEast != null && !pipeToEast.wasVisited()
                     && pipeToEast.getType().resultEntryFromWest() != null) {
-                currPipe.visit();
                 sb.append(pipeToEast.getCode());
                 currPipe = pipeToEast;
             } else if (currPipe.getType().canLeaveToSouth() && pipeToSouth != null && !pipeToSouth.wasVisited()
                     && pipeToSouth.getType().resultEntryFromNorth() != null) {
-                currPipe.visit();
                 sb.append(pipeToSouth.getCode());
                 currPipe = pipeToSouth;
             } else if (currPipe.getType().canLeaveToWest() && pipeToWest != null && !pipeToWest.wasVisited()
                     && pipeToWest.getType().resultEntryFromEast() != null) {
-                currPipe.visit();
                 sb.append(pipeToWest.getCode());
                 currPipe = pipeToWest;
             } else if ((pipeToNorth != null && pipeToNorth.getType() == PipeType.START_END)
@@ -44,6 +41,16 @@ public class PipeAnalyzer {
         }
 
         return sb.toString();
+    }
+
+    public int countInteriorTiles() {
+        int sum = 0;
+        for (Pipe pipe : PipeMatrix.getPipeMaze()) {
+            if (!pipe.wasVisited() && !pipe.wasCounted()) {
+                sum += PipeMatrix.findNeighboringUnvisitedEnclosedPipes(pipe).size();
+            }
+        }
+        return sum;
     }
 
 }
