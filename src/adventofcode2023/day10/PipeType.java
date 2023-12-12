@@ -8,7 +8,9 @@ public enum PipeType {
     BEND_SW("7"),
     BEND_SE("F"),
     START_END("S"),
-    GROUND(".");
+    GROUND("."),
+    DUMMY_CONNECTION("&"),
+    DUMMY_FILLER("D");
 
     private String code;
 
@@ -30,55 +32,120 @@ public enum PipeType {
             case "F" -> BEND_SE;
             case "S" -> START_END;
             case "." -> GROUND;
+            case "&" -> DUMMY_CONNECTION;
+            case "D" -> DUMMY_FILLER;
             default -> null;
         };
     }
 
-    public Coordinate resultEntryFromNorth() {
+    // TODO: refactor these! Should just be a boolean if it's possible to enter from
+    // the North etc.
+    // Especially ugly with the START_END pipe type
+    // public Coordinate resultEntryFromNorth() {
+    // return switch (this) {
+    // case VERT -> new Coordinate(-1, 0);
+    // case HOR -> null;
+    // case BEND_NE -> new Coordinate(1, 1);
+    // case BEND_NW -> new Coordinate(-1, -1);
+    // case BEND_SW -> null;
+    // case BEND_SE -> null;
+    // case START_END -> new Coordinate(0, 0);
+    // default -> null;
+    // };
+    // }
+
+    // public Coordinate resultEntryFromEast() {
+    // return switch (this) {
+    // case VERT -> null;
+    // case HOR -> new Coordinate(0, -1);
+    // case BEND_NE -> new Coordinate(-1, -1);
+    // case BEND_NW -> null;
+    // case BEND_SW -> null;
+    // case BEND_SE -> new Coordinate(1, -1);
+    // case START_END -> new Coordinate(0, 0);
+    // default -> null;
+    // };
+    // }
+
+    // public Coordinate resultEntryFromSouth() {
+    // return switch (this) {
+    // case VERT -> new Coordinate(-1, 0);
+    // case HOR -> null;
+    // case BEND_NE -> null;
+    // case BEND_NW -> null;
+    // case BEND_SW -> new Coordinate(-1, -1);
+    // case BEND_SE -> new Coordinate(-1, 1);
+    // case START_END -> new Coordinate(0, 0);
+    // default -> null;
+    // };
+    // }
+
+    // public Coordinate resultEntryFromWest() {
+    // return switch (this) {
+    // case VERT -> null;
+    // case HOR -> new Coordinate(0, 1);
+    // case BEND_NE -> null;
+    // case BEND_NW -> new Coordinate(-1, 1);
+    // case BEND_SW -> new Coordinate(1, 1);
+    // case BEND_SE -> null;
+    // case START_END -> new Coordinate(0, 0);
+    // default -> null;
+    // };
+    // }
+
+    public boolean canEnterFromNorth(Pipe pipe) {
         return switch (this) {
-            case VERT -> new Coordinate(-1, 0);
-            case HOR -> null;
-            case BEND_NE -> new Coordinate(1, 1);
-            case BEND_NW -> new Coordinate(-1, -1);
-            case BEND_SW -> null;
-            case BEND_SE -> null;
-            default -> null;
+            case VERT -> true;
+            case HOR -> false;
+            case BEND_NE -> true;
+            case BEND_NW -> true;
+            case BEND_SW -> false;
+            case BEND_SE -> false;
+            case START_END -> pipe.getType() == PipeType.VERT || pipe.getType() == PipeType.BEND_SW
+                    || pipe.getType() == PipeType.BEND_SE;
+            default -> false;
         };
     }
 
-    public Coordinate resultEntryFromEast() {
+    public boolean canEnterFromEast(Pipe pipe) {
         return switch (this) {
-            case VERT -> null;
-            case HOR -> new Coordinate(0, -1);
-            case BEND_NE -> new Coordinate(-1, -1);
-            case BEND_NW -> null;
-            case BEND_SW -> null;
-            case BEND_SE -> new Coordinate(1, -1);
-            default -> null;
+            case VERT -> false;
+            case HOR -> true;
+            case BEND_NE -> true;
+            case BEND_NW -> false;
+            case BEND_SW -> false;
+            case BEND_SE -> true;
+            case START_END -> pipe.getType() == PipeType.HOR || pipe.getType() == PipeType.BEND_SW
+                    || pipe.getType() == PipeType.BEND_NW;
+            default -> false;
         };
     }
 
-    public Coordinate resultEntryFromSouth() {
+    public boolean canEnterFromSouth(Pipe pipe) {
         return switch (this) {
-            case VERT -> new Coordinate(-1, 0);
-            case HOR -> null;
-            case BEND_NE -> null;
-            case BEND_NW -> null;
-            case BEND_SW -> new Coordinate(-1, -1);
-            case BEND_SE -> new Coordinate(-1, 1);
-            default -> null;
+            case VERT -> true;
+            case HOR -> false;
+            case BEND_NE -> false;
+            case BEND_NW -> false;
+            case BEND_SW -> true;
+            case BEND_SE -> true;
+            case START_END -> pipe.getType() == PipeType.VERT || pipe.getType() == PipeType.BEND_NE
+                    || pipe.getType() == PipeType.BEND_NW;
+            default -> false;
         };
     }
 
-    public Coordinate resultEntryFromWest() {
+    public boolean canEnterFromWest(Pipe pipe) {
         return switch (this) {
-            case VERT -> null;
-            case HOR -> new Coordinate(0, 1);
-            case BEND_NE -> null;
-            case BEND_NW -> new Coordinate(-1, 1);
-            case BEND_SW -> new Coordinate(1, 1);
-            case BEND_SE -> null;
-            default -> null;
+            case VERT -> false;
+            case HOR -> true;
+            case BEND_NE -> false;
+            case BEND_NW -> true;
+            case BEND_SW -> true;
+            case BEND_SE -> false;
+            case START_END -> pipe.getType() == PipeType.HOR || pipe.getType() == PipeType.BEND_NE
+                    || pipe.getType() == PipeType.BEND_SE;
+            default -> false;
         };
     }
 

@@ -42,4 +42,9 @@ public class Coordinate {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return "Coord x=" + xVal + ", y=" + yVal + " ";
+    }
+
 }

@@ -1,168 +1,275 @@
 package adventofcode2023.day10;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
 
 import adventofcode2023.TextParserUtil;
 
 public class PipeMatrix {
-    private static List<Pipe> pipeMaze;
+    private static String dataToRead = "day10.txt";
+    private static List<String> pipeInputData = TextParserUtil.readData(dataToRead);
+    private static int numRows = pipeInputData.size();
+    private static int numCols = pipeInputData.get(0).length();
     private static Pipe startPipe;
+    private static List<Pipe> pipeMaze;
+    private static String pathString;
 
-    static {
-        initializePipeMatrix();
+    private static int numBigRows = numRows * 2 + 1;
+    private static int numBigCols = numCols * 2 + 1;
+    private static List<Pipe> pipeMazeBig;
+
+    private PipeMatrix() {
     }
 
-    public static void initializePipeMatrix() {
-        List<String> pipeInputData = TextParserUtil.readData("day10.txt");
-        pipeMaze = new ArrayList<>();
-        int numRows = pipeInputData.size();
-        int numCols = pipeInputData.get(0).length();
+    public static List<Pipe> initializePipeMatrix() {
+        List<Pipe> newPipeMaze = new ArrayList<>();
 
         for (int x = 0; x < numRows; x++) {
             for (int y = 0; y < numCols; y++) {
                 String code = pipeInputData.get(x).charAt(y) + "";
                 Pipe pipe = new Pipe(x, y, code);
-                pipeMaze.add(pipe);
+                newPipeMaze.add(pipe);
                 if (pipe.getType() == PipeType.START_END) {
                     startPipe = pipe;
                 }
             }
         }
+        pipeMaze = newPipeMaze;
+        return newPipeMaze;
     }
 
+    public static List<Pipe> initializeExpandedPipeMatrix() {
+        List<Pipe> newPipeMazeBig = new ArrayList<>();
+
+        int pipeCounter = 0;
+        for (int x = 0; x < numBigRows; x++) {
+            for (int y = 0; y < numBigCols; y++) {
+                Pipe newPipe;
+                if (x % 2 == 1 && y % 2 == 1) {
+                    Pipe existingPipe = pipeMaze.get(pipeCounter);
+                    newPipe = new Pipe(existingPipe);
+                    newPipe.setCoord(new Coordinate(x, y));
+                    pipeCounter++;
+                } else {
+                    newPipe = new Pipe(x, y);
+                }
+                newPipeMazeBig.add(newPipe);
+            }
+        }
+
+        pipeMazeBig = newPipeMazeBig;
+
+        for (Pipe pipe : pipeMazeBig) {
+            if (pipe.getType() == null) {
+                pipe.setPipeTypeBasedOnSurroundings();
+            }
+        }
+
+        return newPipeMazeBig;
+    }
+
+    public static String createPipeSequence() {
+        StringBuilder sb = new StringBuilder();
+        int pipeLength = 0;
+
+        Pipe currPipe = startPipe;
+        boolean isEndOfPipe = false;
+
+        while (!isEndOfPipe) {
+
+            Pipe pipeToNorth = currPipe.findPipeToNorth();
+            Pipe pipeToEast = currPipe.findPipeToEast();
+            Pipe pipeToSouth = currPipe.findPipeToSouth();
+            Pipe pipeToWest = currPipe.findPipeToWest();
+            currPipe.visit();
+
+            if ((currPipe.getType().canLeaveToNorth() && pipeToNorth != null && !pipeToNorth.wasVisited()
+                    && pipeToNorth.getType().canEnterFromSouth(currPipe))
+                    || (pipeToNorth != null && pipeToNorth.getType() == PipeType.START_END
+                            && pipeToNorth.getType().canEnterFromSouth(currPipe) && pipeLength > 1)) {
+                sb.append(pipeToNorth.getCode());
+                currPipe.setConnectedToPipeNorth(true);
+                currPipe = pipeToNorth;
+                currPipe.setConnectedToPipeSouth(true);
+            } else if ((currPipe.getType().canLeaveToEast() && pipeToEast != null && !pipeToEast.wasVisited()
+                    && pipeToEast.getType().canEnterFromWest(currPipe))
+                    || (pipeToEast != null && pipeToEast.getType() == PipeType.START_END
+                            && pipeToEast.getType().canEnterFromWest(currPipe) && pipeLength > 1)) {
+                sb.append(pipeToEast.getCode());
+                currPipe.setConnectedToPipeEast(true);
+                currPipe = pipeToEast;
+                currPipe.setConnectedToPipeWest(true);
+            } else if ((currPipe.getType().canLeaveToSouth() && pipeToSouth != null && !pipeToSouth.wasVisited()
+                    && pipeToSouth.getType().canEnterFromNorth(currPipe))
+                    || (pipeToSouth != null && pipeToSouth.getType() == PipeType.START_END
+                            && pipeToSouth.getType().canEnterFromNorth(currPipe) && pipeLength > 1)) {
+                sb.append(pipeToSouth.getCode());
+                currPipe.setConnectedToPipeSouth(true);
+                currPipe = pipeToSouth;
+                currPipe.setConnectedToPipeNorth(true);
+            } else if ((currPipe.getType().canLeaveToWest() && pipeToWest != null && !pipeToWest.wasVisited()
+                    && pipeToWest.getType().canEnterFromEast(currPipe))
+                    || (pipeToWest != null && pipeToWest.getType() == PipeType.START_END
+                            && pipeToWest.getType().canEnterFromEast(currPipe) && pipeLength > 1)) {
+                sb.append(pipeToWest.getCode());
+                currPipe.setConnectedToPipeWest(true);
+                currPipe = pipeToWest;
+                currPipe.setConnectedToPipeEast(true);
+            }
+
+            if (currPipe.getType() == PipeType.START_END) {
+                isEndOfPipe = true;
+            }
+
+            pipeLength++;
+        }
+
+        pathString = sb.toString();
+        return sb.toString();
+    }
+
+    public static int getFarthestRoute() {
+        return pathString.length() / 2;
+    }
+
+    // TODO refactor to take x and y coordinates instead of a coord -> too many
+    // objects created
     public static Pipe getPipeAtCoord(Coordinate coord) {
         return pipeMaze.stream().filter(pipe -> pipe.getCoord().equals(coord)).findFirst().orElse(null);
     }
 
-    public static Pipe getStartPipe() {
-        return startPipe;
+    public static Pipe getPipeAtCoordBig(Coordinate coord) {
+        return pipeMazeBig.stream().filter(pipe -> pipe.getCoord().equals(coord)).findFirst().orElse(null);
     }
 
-    public static List<Pipe> getPipeMaze() {
-        return pipeMaze;
+    public static long countInteriorTiles() {
+        fillPipes();
+
+        return pipeMazeBig.stream()
+                .filter(pipe -> pipe.getFill() != FillType.OUTSIDE && !pipe.wasVisited()
+                        && pipe.getType() != PipeType.DUMMY_FILLER)
+                .count();
+
     }
 
-    public static List<Pipe> findNeighboringUnvisitedEnclosedPipes(Pipe pipe) {
-        List<Pipe> unvisitedEnclosedPipes = new ArrayList<>();
+    public static void fillPipes() {
         List<Pipe> pipesToProcess = new ArrayList<>();
-        pipesToProcess.add(pipe);
+        pipesToProcess.add(getPipeAtCoordBig(new Coordinate(0, 0)));
         Pipe currentPipe;
 
-        while (true) {
-            final List<Pipe> notCounted = pipesToProcess.stream().filter(p -> !p.wasCounted() && !p.wasVisited())
-                    .toList();
-            if (notCounted.isEmpty()) {
+        while (!pipesToProcess.isEmpty()) {
+            final List<Pipe> notFilled = pipesToProcess.stream()
+                    .filter(p -> p.getFill() == FillType.NONE).toList();
+            if (notFilled.isEmpty()) {
                 break;
             }
 
-            currentPipe = notCounted.get(0);
+            currentPipe = notFilled.get(0);
 
-            // Just in case a visited or already counted pipe is passed in to analyze
-            if (currentPipe.wasVisited() || currentPipe.wasCounted()) {
-                return unvisitedEnclosedPipes;
-            }
-
-            Pipe pipeToNorth = currentPipe.findPipeToNorth();
-            Pipe pipeToEast = currentPipe.findPipeToEast();
-            Pipe pipeToSouth = currentPipe.findPipeToSouth();
-            Pipe pipeToWest = currentPipe.findPipeToWest();
+            Pipe pipeToNorth = currentPipe.findPipeToNorthBig();
+            Pipe pipeToEast = currentPipe.findPipeToEastBig();
+            Pipe pipeToSouth = currentPipe.findPipeToSouthBig();
+            Pipe pipeToWest = currentPipe.findPipeToWestBig();
 
             boolean isOnEdgeOfMap = pipeToNorth == null || pipeToEast == null || pipeToSouth == null
                     || pipeToWest == null;
 
-            if (isOnEdgeOfMap) {
-                // None of the bordering values are to be counted
-                for (Pipe p : unvisitedEnclosedPipes) {
-                    p.count();
-                }
+            boolean neighborIsOutside = (pipeToNorth != null && pipeToNorth.getFill() == FillType.OUTSIDE)
+                    || (pipeToEast != null && pipeToEast.getFill() == FillType.OUTSIDE)
+                    || (pipeToSouth != null && pipeToSouth.getFill() == FillType.OUTSIDE)
+                    || (pipeToWest != null && pipeToWest.getFill() == FillType.OUTSIDE);
 
-                return new ArrayList<>();
-            } else {
-                unvisitedEnclosedPipes.add(currentPipe);
-                currentPipe.count();
+            if (currentPipe.wasVisited() || currentPipe.getType() == PipeType.DUMMY_CONNECTION) {
+                currentPipe.setFill(FillType.SEQUENCE);
+            } else if (isOnEdgeOfMap || neighborIsOutside) {
+                currentPipe.setFill(FillType.OUTSIDE);
             }
 
-            if (!pipeToNorth.wasVisited() && !pipeToNorth.wasCounted()) {
+            if (pipeToNorth != null && pipeToNorth.getFill() == FillType.NONE && !pipeToNorth.wasCounted()
+                    && !pipeToNorth.wasVisited()) {
                 pipesToProcess.add(pipeToNorth);
+                pipeToNorth.count();
             }
 
-            if (!pipeToEast.wasVisited() && !pipeToEast.wasCounted()) {
+            if (pipeToEast != null && pipeToEast.getFill() == FillType.NONE && !pipeToEast.wasCounted()
+                    && !pipeToEast.wasVisited()) {
                 pipesToProcess.add(pipeToEast);
+                pipeToEast.count();
             }
 
-            if (!pipeToSouth.wasVisited() && !pipeToSouth.wasCounted()) {
+            if (pipeToSouth != null && pipeToSouth.getFill() == FillType.NONE && !pipeToSouth.wasCounted()
+                    && !pipeToSouth.wasVisited()) {
                 pipesToProcess.add(pipeToSouth);
+                pipeToSouth.count();
             }
 
-            if (!pipeToWest.wasVisited() && !pipeToWest.wasCounted()) {
+            if (pipeToWest != null && pipeToWest.getFill() == FillType.NONE && !pipeToWest.wasCounted()
+                    && !pipeToWest.wasVisited()) {
                 pipesToProcess.add(pipeToWest);
+                pipeToWest.count();
             }
-
-            // pipesToProcess.remove();
 
         }
-
-        return unvisitedEnclosedPipes;
     }
 
-    public static List<Pipe> findNeighboringUnvisitedEnclosedPipesOld(Pipe pipe) {
-        List<Pipe> unvisitedEnclosedPipes = new ArrayList<>();
-        List<Pipe> toProcess = new ArrayList<>();
-        toProcess.add(pipe);
-        ListIterator<Pipe> pipesToProcess = toProcess.listIterator();
-        Pipe currentPipe;
-
-        while (pipesToProcess.hasNext()) {
-            currentPipe = pipesToProcess.next();
-
-            // Just in case a visited or already counted pipe is passed in to analyze
-            if (currentPipe.wasVisited() || currentPipe.wasCounted()) {
-                return unvisitedEnclosedPipes;
+    public static void printPipeMaze() {
+        int counter = 0;
+        StringBuilder sb = new StringBuilder();
+        for (int x = 0; x < numRows; x++) {
+            for (int y = 0; y < numCols; y++) {
+                sb.append(pipeMaze.get(counter).getCode());
+                counter++;
             }
-
-            Pipe pipeToNorth = currentPipe.findPipeToNorth();
-            Pipe pipeToEast = currentPipe.findPipeToEast();
-            Pipe pipeToSouth = currentPipe.findPipeToSouth();
-            Pipe pipeToWest = currentPipe.findPipeToWest();
-
-            boolean isOnEdgeOfMap = pipeToNorth == null || pipeToEast == null || pipeToSouth == null
-                    || pipeToWest == null;
-
-            if (isOnEdgeOfMap) {
-                // None of the bordering values are to be counted
-                for (Pipe p : unvisitedEnclosedPipes) {
-                    p.count();
-                }
-
-                return new ArrayList<>();
-            } else {
-                unvisitedEnclosedPipes.add(currentPipe);
-                currentPipe.count();
-            }
-
-            if (!pipeToNorth.wasVisited() && !pipeToNorth.wasCounted()) {
-                pipesToProcess.add(pipeToNorth);
-            }
-
-            if (!pipeToEast.wasVisited() && !pipeToEast.wasCounted()) {
-                pipesToProcess.add(pipeToEast);
-            }
-
-            if (!pipeToSouth.wasVisited() && !pipeToSouth.wasCounted()) {
-                pipesToProcess.add(pipeToSouth);
-            }
-
-            if (!pipeToWest.wasVisited() && !pipeToWest.wasCounted()) {
-                pipesToProcess.add(pipeToWest);
-            }
-
-            // pipesToProcess.remove();
-
+            sb.append("\n");
         }
-
-        return unvisitedEnclosedPipes;
+        System.out.println(sb.toString());
     }
 
+    public static void printPipeMazeBig() {
+        int counter = 0;
+        StringBuilder sb = new StringBuilder();
+        for (int x = 0; x < numBigRows; x++) {
+            for (int y = 0; y < numBigCols; y++) {
+                sb.append(pipeMazeBig.get(counter).getCode());
+                counter++;
+            }
+            sb.append("\n");
+        }
+        System.out.println(sb.toString());
+    }
+
+    public static void printPipeMazeBigFillers() {
+        int counter = 0;
+        StringBuilder sb = new StringBuilder();
+        for (int x = 0; x < numBigRows; x++) {
+            for (int y = 0; y < numBigCols; y++) {
+                sb.append(pipeMazeBig.get(counter).getFill().getString());
+                counter++;
+            }
+            sb.append("\n");
+        }
+        System.out.println(sb.toString());
+    }
+
+    public static void saveBigPipeMazeToFile() {
+        int counter = 0;
+        StringBuilder sb = new StringBuilder();
+        for (int x = 0; x < numBigRows; x++) {
+            for (int y = 0; y < numBigCols; y++) {
+                String code = pipeMazeBig.get(counter).getCode();
+                sb.append(code.equals("none") ? " " : code);
+                counter++;
+            }
+            sb.append("\n");
+        }
+        try (BufferedWriter writer = Files.newBufferedWriter(Paths.get("./res/maze.txt"))) {
+            writer.write(sb.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

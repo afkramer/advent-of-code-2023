@@ -6,14 +6,17 @@ public class Day10 implements Day {
 
     @Override
     public void partOne() {
-        PipeAnalyzer analyzer = new PipeAnalyzer();
-        System.out.println(analyzer.createPipeSequence().length() / 2 + 1);
+        PipeMatrix.initializePipeMatrix();
+        PipeMatrix.createPipeSequence();
+        System.out.println(PipeMatrix.getFarthestRoute());
     }
 
     @Override
     public void partTwo() {
-        PipeAnalyzer analyzer = new PipeAnalyzer();
-        System.out.println(analyzer.countInteriorTiles());
+        PipeMatrix.initializePipeMatrix();
+        PipeMatrix.createPipeSequence();
+        PipeMatrix.initializeExpandedPipeMatrix();
+        System.out.println(PipeMatrix.countInteriorTiles());
     }
 
 }
