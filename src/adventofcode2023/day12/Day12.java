@@ -6,12 +6,14 @@ public class Day12 implements Day {
 
     @Override
     public void partOne() {
-        System.out.println();
+        SpringAnalyzer analyzer = new SpringAnalyzer();
+        System.out.println(analyzer.sumOfAllPossibleIterations());
     }
 
     @Override
     public void partTwo() {
-        System.out.println();
+        SpringAnalyzer analyzer = new SpringAnalyzer();
+        System.out.println(analyzer.sumOfAllPossibleIterationsBig());
     }
 
 }
