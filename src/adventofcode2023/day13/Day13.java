@@ -12,7 +12,8 @@ public class Day13 implements Day {
 
     @Override
     public void partTwo() {
-        System.out.println();
+        MirrorAnalyzer analyzer = new MirrorAnalyzer();
+        System.out.println(analyzer.sumMirrorsChanged());
     }
 
 }

@@ -18,8 +18,17 @@ public class MirrorAnalyzer {
         long sum = 0;
         for (List<String> mirrorInput : mirrors) {
             Mirror mirror = new Mirror(mirrorInput);
-            sum += mirror.horizontalMatchRowCount();
+            sum += mirror.horizontalMatchRowCount() * 100;
             sum += mirror.verticalMatchColumnCount();
+        }
+        return sum;
+    }
+
+    public long sumMirrorsChanged() {
+        long sum = 0;
+        for (List<String> mirrorInput : mirrors) {
+            Mirror mirror = new Mirror(mirrorInput);
+            sum += mirror.changedSums();
         }
         return sum;
     }

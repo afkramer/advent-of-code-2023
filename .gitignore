@@ -5,8 +5,9 @@
 # Compiled class file
 *.class
 
-# bin .txt files
+# bin and res .txt files
 bin/**/*.txt
+res/**
 
 # Log file
 *.log
