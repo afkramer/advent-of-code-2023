@@ -13,7 +13,7 @@ public class Day12 implements Day {
     @Override
     public void partTwo() {
         SpringAnalyzer analyzer = new SpringAnalyzer();
-        System.out.println(analyzer.sumOfAllPossibleIterationsBig());
+        System.out.println(analyzer.findCounts());
     }
 
 }
