@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class TextParserUtil {
+    public static final boolean PRINT_IS_ON = false;
+    public static int maxId = 0;
+
     public static List<String> readData(String fileName) {
         try (BufferedReader reader = Files.newBufferedReader(Paths.get("./res/" + fileName))) {
             return reader.lines()
@@ -119,5 +122,9 @@ public class TextParserUtil {
         List<String> copiedList = new ArrayList<>();
         copiedList.addAll(listToCopy);
         return copiedList;
+    }
+
+    public static int provideId() {
+        return maxId++;
     }
 }
