@@ -6,14 +6,14 @@ public class Day17 implements Day {
 
     @Override
     public void partOne() {
-        PathAnalyzer analyzer = new PathAnalyzer();
-        System.out.println("The heat loss at minimum is: ");
-        System.out.println(analyzer.getSmallestPath());
+        DijkstraAnalyzer analyzer = new DijkstraAnalyzer();
+        System.out.println("The heat loss route at minimum is: ");
+        System.out.println(analyzer.sumShortestRoute());
     }
 
     @Override
     public void partTwo() {
-        System.out.println();
+        System.out.println("Part two has not been implemented yet");
     }
 
 }
