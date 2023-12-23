@@ -13,25 +13,28 @@ public class DijkstraAnalyzer {
     private int minYValue = 0;
     private int ySize = rawInput.get(0).length();
     private static final int MAX_NODES_ONE_DIRECTION = 3;
+    private static final int MIN_CLUMSY_MOVES = 4;
+    private static final int MAX_CLUMSY_MOVES = 10;
+    // private List<Match> previousMatches = new ArrayList<>();
 
-    public DijkstraAnalyzer() {
-        initializeGraph();
-        setUpNeighbors();
+    public void initializeForMax3() {
+        initializeGraphMaxMoves3();
+        setUpNeighborsMax3();
     }
 
-    public void initializeGraph() {
+    private void initializeGraphMaxMoves3() {
         this.graph = new ArrayList<>();
         // Set up beginning node outside the loop, as it has no previous steps or
         // direction
         graph.add(new Node(0, new Coordinate(0, 0), Direction.UNDEFINED, 0));
         for (int x = minXValue; x < xSize; x++) {
             for (int y = minYValue; y < ySize; y++) {
-                generateNodesForPossibleMoves(x, y);
+                generateNodesForPossibleMovesMax3(x, y);
             }
         }
     }
 
-    private void generateNodesForPossibleMoves(int xVal, int yVal) {
+    private void generateNodesForPossibleMovesMax3(int xVal, int yVal) {
         for (Direction direction : Direction.getDirections()) {
             for (int moves = 1; moves <= MAX_NODES_ONE_DIRECTION; moves++) {
                 if (isValidNode(xVal, yVal, direction, moves)) {
@@ -53,15 +56,13 @@ public class DijkstraAnalyzer {
 
     }
 
-    // START HERE -> how to deal with neighbors?
-    // Going to need to make sure that the direction and number of steps fits
-    private void setUpNeighbors() {
+    private void setUpNeighborsMax3() {
         for (Node node : graph) {
-            findPossibleNeighborsForNode(node);
+            findPossibleNeighborsForNodeMax3(node);
         }
     }
 
-    private void findPossibleNeighborsForNode(Node node) {
+    private void findPossibleNeighborsForNodeMax3(Node node) {
         Direction currDirection = node.getDirection();
         int currNumMoves = node.getNumMoves();
         for (Direction direction : Direction.getDirections()) {
@@ -70,6 +71,73 @@ public class DijkstraAnalyzer {
             if (direction == currDirection) {
                 neighborNode = getNode(neighborCoord, direction, currNumMoves + 1);
             } else if (direction != Direction.getOppositeDirection(currDirection)) {
+                neighborNode = getNode(neighborCoord, direction, 1);
+
+            }
+            if (neighborNode != null) {
+                node.addNeighborNode(neighborNode);
+            }
+        }
+    }
+
+    public void initializeForGraphClumsy() {
+        initializeGraphClumsy();
+        setUpNeighborsClumsy();
+    }
+
+    private void initializeGraphClumsy() {
+        this.graph = new ArrayList<>();
+        // Set up beginning node outside the loop, as it has no previous steps or
+        // direction
+        graph.add(new Node(0, new Coordinate(0, 0), Direction.UNDEFINED, 0));
+        for (int x = minXValue; x < xSize; x++) {
+            for (int y = minYValue; y < ySize; y++) {
+                generateNodesForPossibleMovesClumsy(x, y);
+            }
+        }
+    }
+
+    private void generateNodesForPossibleMovesClumsy(int xVal, int yVal) {
+        for (Direction direction : Direction.getDirections()) {
+            for (int moves = 1; moves <= MAX_CLUMSY_MOVES; moves++) {
+                if (isValidClumsyNode(xVal, yVal, direction, moves)) {
+                    Node node = new Node(getHeatlossAtCoord(xVal, yVal), new Coordinate(xVal, yVal), direction, moves);
+                    graph.add(node);
+                }
+            }
+        }
+    }
+
+    private boolean isValidClumsyNode(int xVal, int yVal, Direction direction, int numMoves) {
+        int movesToMin = 4 - numMoves;
+        return switch (direction) {
+            // (Coordinate is on the grid) && (Coordinate has enough room to reach min
+            // moves)
+            case NORTH -> (xVal + numMoves <= xSize - 1) && (xVal - movesToMin >= minXValue);
+            case EAST -> (yVal - numMoves >= minYValue) && (yVal + movesToMin <= ySize - 1);
+            case SOUTH -> (xVal - numMoves >= minXValue) && (xVal + movesToMin <= xSize - 1);
+            case WEST -> (yVal + numMoves <= ySize - 1) && (yVal - movesToMin >= minYValue);
+            default -> false;
+        };
+
+    }
+
+    private void setUpNeighborsClumsy() {
+        for (Node node : graph) {
+            findPossibleNeighborsForClumsyNode(node);
+        }
+    }
+
+    private void findPossibleNeighborsForClumsyNode(Node node) {
+        Direction currDirection = node.getDirection();
+        int currNumMoves = node.getNumMoves();
+        for (Direction direction : Direction.getDirections()) {
+            Coordinate neighborCoord = node.getCoordinateOfNodeInDirection(direction, 1);
+            Node neighborNode = null;
+            if ((direction == currDirection || currDirection == Direction.UNDEFINED) && currNumMoves < 10) {
+                neighborNode = getNode(neighborCoord, direction, currNumMoves + 1);
+            } else if (direction != Direction.getOppositeDirection(currDirection) && direction != currDirection
+                    && currNumMoves >= 4) {
                 neighborNode = getNode(neighborCoord, direction, 1);
 
             }
@@ -99,7 +167,12 @@ public class DijkstraAnalyzer {
             for (Node neighborNode : currNode.getAdjacentNodes()) {
                 // if (!settledNodes.contains(neighborNode)) {
                 // if (nodeStillNeedsToBeEvaluated(settledNodes, neighborNode)) {
-                boolean wasUpdated = updateNodes(currNode, neighborNode);
+                boolean wasUpdated = false;
+                // if (!previousMatches.contains(new Match(currNode, neighborNode,
+                // neighborNode.getHeatLossTotal()))) {
+                wasUpdated = updateNodes(currNode, neighborNode);
+                // }
+
                 // if (!unsettledNodes.contains(neighborNode)) {
                 if (wasUpdated) {
                     unsettledNodes.add(neighborNode);
@@ -130,7 +203,7 @@ public class DijkstraAnalyzer {
         }
 
         if (nodeWithBestPath != null) {
-            // printBestPath(nodeWithBestPath);
+            printBestPath(nodeWithBestPath);
             return nodeWithBestPath.getHeatLossTotal();
         } else {
             return 0l;
@@ -156,6 +229,7 @@ public class DijkstraAnalyzer {
         Integer newHeatLoss = currNode.getHeatLossTotal() + heatLossToNeighbor;
         boolean wasUpdated = false;
         if (neighborNode.getHeatLossTotal() == 0 || neighborNode.getHeatLossTotal() > newHeatLoss) {
+            // previousMatches.add(new Match(currNode, neighborNode, newHeatLoss));
             wasUpdated = true;
             neighborNode.setPreviousNode(currNode);
             neighborNode.setHeatLossTotal(newHeatLoss);
